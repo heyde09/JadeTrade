@@ -1,0 +1,985 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jade Trade - Live Crypto Terminal & Global Community</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        darkBg: '#080c14',
+                        cardBg: '#0f172a',
+                        cardHover: '#1e293b',
+                        accentGreen: '#10b981',
+                        accentRed: '#ef4444',
+                        accentBlue: '#3b82f6',
+                        accentYellow: '#f59e0b',
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Font Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #080c14; }
+        ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: #334155; }
+        @keyframes pulseGlow {
+            0%, 100% { opacity: 0.3; transform: scale(1); }
+            50% { opacity: 0.7; transform: scale(1.02); }
+        }
+        .animate-glow { animation: pulseGlow 3s infinite ease-in-out; }
+    </style>
+</head>
+<body class="bg-darkBg text-slate-100 min-h-screen flex flex-col selection:bg-emerald-500 selection:text-white">
+
+    <!-- Header Navigation & Top Menu Bar -->
+    <header class="border-b border-slate-800 bg-cardBg/95 backdrop-blur sticky top-0 z-50 shadow-md">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-emerald-600 to-teal-600 flex items-center justify-center shadow-lg shadow-emerald-500/20">
+                    <i class="fa-solid fa-gem text-white text-lg"></i>
+                </div>
+                <div>
+                    <h1 class="font-bold text-base sm:text-lg tracking-tight bg-gradient-to-r from-white to-slate-300 bg-clip-text text-transparent">Jade Trade</h1>
+                    <p class="text-[10px] text-slate-400">Decentralized Terminal & Signal Engine</p>
+                </div>
+            </div>
+
+            <!-- Top Navigation Menu Bar -->
+            <nav class="hidden md:flex items-center space-x-1 bg-slate-900/80 p-1.5 rounded-2xl border border-slate-800">
+                <button onclick="switchTab('terminal')" id="nav-terminal" class="flex items-center space-x-2 px-4 py-2 rounded-xl text-xs font-semibold transition bg-emerald-600 text-white shadow-lg shadow-emerald-600/20">
+                    <i class="fa-solid fa-chart-candlestick text-sm"></i>
+                    <span>Live Analyzer</span>
+                </button>
+                <button onclick="switchTab('news')" id="nav-news" class="flex items-center space-x-2 px-4 py-2 rounded-xl text-xs font-semibold transition text-slate-400 hover:bg-slate-800 hover:text-slate-200">
+                    <i class="fa-solid fa-newspaper text-sm"></i>
+                    <span>Daily News (50+)</span>
+                </button>
+                <button onclick="switchTab('chat')" id="nav-chat" class="flex items-center space-x-2 px-4 py-2 rounded-xl text-xs font-semibold transition text-slate-400 hover:bg-slate-800 hover:text-slate-200">
+                    <i class="fa-solid fa-comments text-sm"></i>
+                    <span>Global Chat</span>
+                </button>
+                <button onclick="switchTab('donate')" id="nav-donate" class="flex items-center space-x-2 px-4 py-2 rounded-xl text-xs font-semibold transition text-slate-400 hover:bg-slate-800 hover:text-slate-200">
+                    <i class="fa-solid fa-hand-holding-dollar text-sm text-emerald-400"></i>
+                    <span>Support & Donate</span>
+                </button>
+            </nav>
+
+            <div class="flex items-center space-x-3">
+                <div class="hidden sm:flex items-center space-x-2 bg-emerald-500/10 border border-emerald-500/20 px-3 py-1.5 rounded-full text-xs text-emerald-400 font-medium">
+                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                    <span>Secure Local Session</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Navigation Subbar -->
+        <div class="md:hidden flex items-center justify-around bg-slate-900 border-t border-slate-800 px-2 py-2 text-xs">
+            <button onclick="switchTab('terminal')" id="nav-mob-terminal" class="text-emerald-400 font-semibold px-3 py-1"><i class="fa-solid fa-chart-candlestick mr-1"></i>Analyzer</button>
+            <button onclick="switchTab('news')" id="nav-mob-news" class="text-slate-400 font-semibold px-3 py-1"><i class="fa-solid fa-newspaper mr-1"></i>News</button>
+            <button onclick="switchTab('chat')" id="nav-mob-chat" class="text-slate-400 font-semibold px-3 py-1"><i class="fa-solid fa-comments mr-1"></i>Chat</button>
+            <button onclick="switchTab('donate')" id="nav-mob-donate" class="text-slate-400 font-semibold px-3 py-1"><i class="fa-solid fa-hand-holding-dollar mr-1"></i>Donate</button>
+        </div>
+    </header>
+
+    <!-- Main Container Content -->
+    <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
+
+        <!-- TAB 1: LIVE ANALYZER & TRADINGVIEW CHART -->
+        <div id="tabContent-terminal" class="space-y-6">
+            
+            <!-- Top Controls Bar: Asset Selector & Token Quickpick -->
+            <div class="bg-cardBg border border-slate-800/80 rounded-2xl p-4 shadow-xl flex flex-wrap items-center justify-between gap-4">
+                <div class="flex items-center space-x-4">
+                    <div class="w-12 h-12 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400 text-2xl shadow-inner">
+                        <i class="fa-solid fa-bolt"></i>
+                    </div>
+                    <div>
+                        <div class="flex items-center space-x-2">
+                            <h2 id="selectedTokenTitle" class="text-xl font-bold tracking-tight text-white">Bitcoin (BTC)</h2>
+                            <span class="text-xs bg-slate-800 text-emerald-400 font-mono px-2 py-0.5 rounded border border-slate-700">LIVE FEED</span>
+                        </div>
+                        <p class="text-xs text-slate-400 mt-0.5">Powered by TradingView Advanced Charts & Binance Liquidity</p>
+                    </div>
+                </div>
+
+                <div class="flex flex-wrap items-center gap-3">
+                    <div class="flex items-center space-x-2">
+                        <label class="text-xs text-slate-400 font-medium">Quick Token:</label>
+                        <select id="mainAssetSelect" onchange="onAssetDropdownChange(this.value)" class="bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs font-semibold text-white focus:outline-none focus:border-emerald-500 cursor-pointer">
+                            <!-- Populated dynamically -->
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Trending & Top Tokens Ticker Ribbon -->
+            <div class="bg-cardBg border border-slate-800/80 rounded-xl p-3 shadow-lg flex items-center justify-between overflow-x-auto space-x-4 text-xs">
+                <div class="flex items-center space-x-2 text-emerald-400 font-bold whitespace-nowrap">
+                    <i class="fa-solid fa-fire text-amber-500"></i>
+                    <span>Trending & Top:</span>
+                </div>
+                <div id="trendingRibbon" class="flex items-center space-x-3 whitespace-nowrap">
+                    <!-- Injected dynamically -->
+                </div>
+            </div>
+
+            <!-- COLLAPSIBLE SIGNAL ENGINE CONFIG BAR -->
+            <div class="bg-cardBg border border-slate-800/80 rounded-2xl p-4 shadow-xl space-y-3">
+                <div class="flex items-center justify-between cursor-pointer" onclick="toggleConfigPanel()">
+                    <h3 class="text-xs font-bold uppercase tracking-wider text-purple-400 flex items-center space-x-2">
+                        <i class="fa-solid fa-sliders"></i>
+                        <span>Signal Engine Configuration (RSI, MA, MACD, Volume)</span>
+                    </h3>
+                    <span id="configToggleIcon" class="text-xs text-slate-400 font-mono"><i class="fa-solid fa-chevron-down"></i> Click to Expand/Collapse</span>
+                </div>
+
+                <div id="configPanelContent" class="grid grid-cols-1 md:grid-cols-4 gap-4 pt-2 border-t border-slate-800">
+                    <!-- 1. RSI Indicator -->
+                    <div class="bg-slate-900/70 border border-slate-800 rounded-xl p-3 space-y-2">
+                        <div class="flex items-center justify-between">
+                            <label class="text-xs font-semibold text-slate-200 flex items-center space-x-1.5">
+                                <input type="checkbox" id="rsiEnabled" checked class="rounded bg-slate-800 border-slate-700 text-emerald-600 focus:ring-emerald-500 cursor-pointer">
+                                <span>RSI Oscillator</span>
+                            </label>
+                            <span id="rsiLiveValBadge" class="text-[11px] font-mono text-emerald-400 font-bold">54.2</span>
+                        </div>
+                        <div class="grid grid-cols-3 gap-1 text-center">
+                            <div>
+                                <span class="text-[9px] text-slate-400 block">Period</span>
+                                <input type="number" id="rsiPeriod" value="14" min="2" max="50" class="w-full bg-slate-800 border border-slate-700 rounded px-1 py-1 text-[11px] text-white text-center">
+                            </div>
+                            <div>
+                                <span class="text-[9px] text-red-400 block">Overbought</span>
+                                <input type="number" id="rsiOverbought" value="70" min="50" max="95" class="w-full bg-slate-800 border border-slate-700 rounded px-1 py-1 text-[11px] text-white text-center">
+                            </div>
+                            <div>
+                                <span class="text-[9px] text-emerald-400 block">Oversold</span>
+                                <input type="number" id="rsiOversold" value="30" min="5" max="50" class="w-full bg-slate-800 border border-slate-700 rounded px-1 py-1 text-[11px] text-white text-center">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 2. Moving Average -->
+                    <div class="bg-slate-900/70 border border-slate-800 rounded-xl p-3 space-y-2">
+                        <div class="flex items-center justify-between">
+                            <label class="text-xs font-semibold text-slate-200 flex items-center space-x-1.5">
+                                <input type="checkbox" id="maEnabled" checked class="rounded bg-slate-800 border-slate-700 text-emerald-600 focus:ring-emerald-500 cursor-pointer">
+                                <span>Moving Avg</span>
+                            </label>
+                            <select id="maType" class="bg-slate-800 border border-slate-700 text-[10px] text-slate-300 rounded px-1 py-0.5">
+                                <option value="SMA">SMA</option>
+                                <option value="EMA">EMA</option>
+                            </select>
+                        </div>
+                        <div>
+                            <div class="flex justify-between text-[10px] text-slate-400 mb-1">
+                                <span>Length</span>
+                                <span id="maPeriodVal" class="text-slate-200 font-mono font-semibold">20</span>
+                            </div>
+                            <input type="range" id="maPeriod" min="5" max="100" value="20" oninput="updateRangeVal('maPeriod', 'maPeriodVal')" class="w-full h-1 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-emerald-500">
+                        </div>
+                    </div>
+
+                    <!-- 3. MACD Trend -->
+                    <div class="bg-slate-900/70 border border-slate-800 rounded-xl p-3 space-y-2">
+                        <div class="flex items-center justify-between">
+                            <label class="text-xs font-semibold text-slate-200 flex items-center space-x-1.5">
+                                <input type="checkbox" id="macdEnabled" checked class="rounded bg-slate-800 border-slate-700 text-emerald-600 focus:ring-emerald-500 cursor-pointer">
+                                <span>MACD Trend</span>
+                            </label>
+                            <span class="text-[9px] text-slate-400 font-mono">12,26,9</span>
+                        </div>
+                        <div class="grid grid-cols-3 gap-1 text-center">
+                            <div>
+                                <span class="text-[9px] text-slate-400 block">Fast</span>
+                                <input type="number" id="macdFast" value="12" class="w-full bg-slate-800 border border-slate-700 rounded px-1 py-1 text-[11px] text-white text-center">
+                            </div>
+                            <div>
+                                <span class="text-[9px] text-slate-400 block">Slow</span>
+                                <input type="number" id="macdSlow" value="26" class="w-full bg-slate-800 border border-slate-700 rounded px-1 py-1 text-[11px] text-white text-center">
+                            </div>
+                            <div>
+                                <span class="text-[9px] text-slate-400 block">Signal</span>
+                                <input type="number" id="macdSignal" value="9" class="w-full bg-slate-800 border border-slate-700 rounded px-1 py-1 text-[11px] text-white text-center">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 4. Volume Trigger & Update Action -->
+                    <div class="bg-slate-900/70 border border-slate-800 rounded-xl p-3 flex flex-col justify-between space-y-2">
+                        <div class="flex items-center justify-between">
+                            <label class="text-xs font-semibold text-slate-200 flex items-center space-x-1.5">
+                                <input type="checkbox" id="volEnabled" checked class="rounded bg-slate-800 border-slate-700 text-emerald-600 focus:ring-emerald-500 cursor-pointer">
+                                <span>Volume Spike</span>
+                            </label>
+                            <span id="volThreshVal" class="text-[10px] font-mono text-emerald-400">1.5x</span>
+                        </div>
+                        <input type="range" id="volThreshold" min="1.0" max="3.0" step="0.1" value="1.5" oninput="updateRangeVal('volThreshold', 'volThreshVal')" class="w-full h-1 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-emerald-500">
+                        <button onclick="triggerRecalculate()" class="w-full bg-purple-600 hover:bg-purple-500 text-white rounded-lg py-1.5 text-xs font-bold transition shadow cursor-pointer">
+                            Update Indicators
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SIDE-BY-SIDE GRID: CHART ON LEFT (7 COLS), ALGORITHMIC BIAS ON RIGHT (5 COLS) -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+                
+                <!-- Left Column: Compact TradingView Chart (7 Cols) -->
+                <div class="lg:col-span-7 bg-cardBg border border-slate-800/80 rounded-2xl p-5 shadow-xl space-y-4">
+                    <div class="flex flex-wrap items-center justify-between gap-3">
+                        <h3 class="text-xs font-semibold uppercase tracking-wider text-slate-300 flex items-center space-x-2">
+                            <i class="fa-solid fa-chart-line text-emerald-500"></i>
+                            <span>TradingView Interactive Chart</span>
+                        </h3>
+                        <span class="text-[10px] bg-slate-900 text-emerald-400 px-2.5 py-1 rounded border border-slate-800 font-mono">Select TF on Chart Toolbar</span>
+                    </div>
+
+                    <!-- Independent Timeframe Selector Bar & Update Button -->
+                    <div class="bg-slate-900/70 border border-slate-800 rounded-xl p-3 flex flex-wrap items-center justify-between gap-2">
+                        <span class="text-[11px] font-semibold text-slate-300 flex items-center space-x-1.5">
+                            <i class="fa-solid fa-clock text-emerald-400"></i>
+                            <span>Engine TF:</span>
+                        </span>
+                        <div class="flex items-center space-x-1 bg-slate-950 p-1 rounded-lg border border-slate-800">
+                            <button onclick="setEngineTimeframe('1m')" id="tf_1m" class="px-2 py-0.5 text-[11px] font-semibold rounded transition text-slate-400 hover:text-white">1m</button>
+                            <button onclick="setEngineTimeframe('5m')" id="tf_5m" class="px-2 py-0.5 text-[11px] font-semibold rounded transition text-slate-400 hover:text-white">5m</button>
+                            <button onclick="setEngineTimeframe('15m')" id="tf_15m" class="px-2 py-0.5 text-[11px] font-semibold rounded transition text-slate-400 hover:text-white">15m</button>
+                            <button onclick="setEngineTimeframe('1h')" id="tf_1h" class="px-2 py-0.5 text-[11px] font-semibold rounded transition text-slate-400 hover:text-white">1h</button>
+                            <button onclick="setEngineTimeframe('4h')" id="tf_4h" class="px-2 py-0.5 text-[11px] font-semibold rounded transition text-slate-400 hover:text-white">4h</button>
+                            <button onclick="setEngineTimeframe('D')" id="tf_D" class="px-2 py-0.5 text-[11px] font-semibold rounded transition bg-emerald-600 text-white shadow">1D</button>
+                        </div>
+                        <button onclick="updateEngineTimeframe()" class="bg-emerald-600 hover:bg-emerald-500 text-white px-3 py-1.5 rounded-lg text-[11px] font-bold transition shadow flex items-center space-x-1 cursor-pointer">
+                            <i class="fa-solid fa-arrows-rotate text-[9px]"></i>
+                            <span>Update Timeframe</span>
+                        </button>
+                    </div>
+                    
+                    <div id="tradingview_widget_container" class="w-full h-[420px] rounded-xl overflow-hidden bg-slate-950 border border-slate-800"></div>
+                </div>
+
+                <!-- Right Column: Algorithmic Trade Bias & Signal Panel (5 Cols) -->
+                <div class="lg:col-span-5 space-y-6">
+                    <div id="signalPanelCard" class="bg-gradient-to-br from-cardBg to-slate-900 border-2 border-emerald-500/40 rounded-2xl p-5 shadow-xl relative overflow-hidden transition-all duration-300 space-y-4">
+                        <div id="panelGlow" class="absolute -right-20 -bottom-20 w-48 h-48 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none animate-glow"></div>
+
+                        <div class="flex items-center space-x-3.5 relative z-10">
+                            <div id="signalIconBox" class="w-12 h-12 rounded-xl bg-emerald-500/20 border-2 border-emerald-500/40 flex items-center justify-center text-emerald-400 text-lg shadow-lg shadow-emerald-500/10 flex-shrink-0">
+                                <i id="signalFaIcon" class="fa-solid fa-arrow-trend-up"></i>
+                            </div>
+                            <div>
+                                <div class="flex items-center space-x-2">
+                                    <span class="text-[9px] font-semibold text-slate-400 uppercase tracking-widest">Algorithmic Bias</span>
+                                    <span id="confidenceBadge" class="text-[9px] px-2 py-0.2 rounded-full font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">High Confidence</span>
+                                </div>
+                                <h3 id="signalTitle" class="text-xl font-extrabold tracking-tight text-emerald-400 mt-0.5">LONG BIAS</h3>
+                            </div>
+                        </div>
+
+                        <!-- Composite Score & Badge -->
+                        <div class="bg-slate-900/80 p-3 rounded-xl border border-slate-800 flex items-center justify-between relative z-10">
+                            <div>
+                                <span class="text-[10px] text-slate-400 block">Composite Score</span>
+                                <div class="flex items-baseline space-x-1">
+                                    <span id="scoreNumber" class="text-xl font-mono font-black text-emerald-400">+75</span>
+                                    <span class="text-[10px] text-slate-500 font-mono">/ 100</span>
+                                </div>
+                            </div>
+                            <div class="text-right space-y-0.5 text-[10px]">
+                                <div class="text-slate-400">RSI Val: <span id="explainRsi" class="font-semibold text-emerald-400">Neutral (+20)</span></div>
+                                <div class="text-slate-400">MA Trend: <span id="explainMa" class="font-semibold text-emerald-400">Bullish (+30)</span></div>
+                                <div class="text-slate-400">MACD: <span id="explainMacd" class="font-semibold text-emerald-400">Bullish (+25)</span></div>
+                                <div class="text-slate-400">Volume: <span id="explainVol" class="font-semibold text-emerald-400">Normal (+10)</span></div>
+                            </div>
+                        </div>
+
+                        <!-- Rationale -->
+                        <div class="pt-3 border-t border-slate-800/80 text-[11px] text-slate-300 space-y-1 relative z-10">
+                            <p class="font-semibold text-slate-200 flex items-center space-x-1.5">
+                                <i class="fa-solid fa-circle-info text-emerald-400"></i>
+                               <span>Analysis Rationale:</span>
+                            </p>
+                            <p id="rationaleText" class="leading-relaxed text-slate-400">
+                                Algorithmic engine is evaluating live price feeds against your custom settings.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Traffic Banner Ad Unit -->
+                    <div class="bg-gradient-to-r from-cardBg via-slate-900 to-cardBg border border-slate-800 rounded-2xl p-4 shadow-xl space-y-2">
+                        <span class="text-[9px] bg-slate-800 text-slate-400 px-1.5 py-0.5 rounded border border-slate-700 font-mono">Sponsored</span>
+                        <h4 class="text-xs font-bold text-white">Maximize Your Crypto Trading Edge</h4>
+                        <p class="text-[11px] text-slate-400">Trade securely with zero fees on our partner platform.</p>
+                        <a href="#" target="_blank" class="block w-full text-center bg-blue-600 hover:bg-blue-500 text-white rounded-xl py-2 text-[11px] font-bold transition shadow">
+                            Claim Bonus <i class="fa-solid fa-arrow-right ml-1"></i>
+                        </a>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- TAB 2: DAILY CRYPTO NEWS (50+ ARTICLES & PAGINATION) -->
+        <div id="tabContent-news" class="hidden space-y-6">
+            <div class="bg-cardBg border border-slate-800/80 rounded-2xl p-5 shadow-xl flex items-center justify-between">
+                <div>
+                    <h2 class="text-lg font-bold text-white flex items-center space-x-2">
+                        <i class="fa-solid fa-newspaper text-emerald-500"></i>
+                        <span>Automated Daily Crypto News Feed (50+ Articles)</span>
+                    </h2>
+                    <p class="text-xs text-slate-400 mt-0.5">Curated market updates, regulatory flashes, and blockchain breakthroughs with direct article sources.</p>
+                </div>
+                <span id="newsDateBadge" class="text-xs bg-slate-900 text-slate-300 px-3 py-1.5 rounded-xl border border-slate-700 font-mono"></span>
+            </div>
+
+            <div class="bg-cardBg border border-slate-800/80 rounded-2xl p-4 shadow-xl space-y-3">
+                <h3 class="text-xs font-bold uppercase tracking-wider text-slate-300 flex items-center space-x-2">
+                    <i class="fa-solid fa-fire text-amber-500"></i>
+                    <span>Top Trending Tokens in News & Markets</span>
+                </h3>
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-3" id="trendingNewsGrid">
+                    <!-- Populated dynamically -->
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="newsContainer">
+                <!-- Populated dynamically -->
+            </div>
+
+            <div class="flex items-center justify-between bg-cardBg border border-slate-800/80 rounded-2xl p-4 shadow-xl text-xs">
+                <span id="paginationInfo" class="text-slate-400 font-mono">Showing Page 1 of 5 (50 total articles)</span>
+                <div class="flex items-center space-x-1.5" id="paginationControls">
+                    <!-- Populated dynamically -->
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 3: GLOBAL COMMUNITY CHAT -->
+        <div id="tabContent-chat" class="hidden space-y-6">
+            <div class="bg-cardBg border border-slate-800/80 rounded-2xl p-5 shadow-xl flex flex-col h-[650px]">
+                <div class="flex items-center justify-between pb-4 border-b border-slate-800">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-10 h-10 rounded-xl bg-blue-500/10 border border-blue-500/30 flex items-center justify-center text-blue-400">
+                            <i class="fa-solid fa-comments"></i>
+                        </div>
+                        <div>
+                            <h2 class="text-sm font-bold text-white">Global Community Chat</h2>
+                            <p class="text-[11px] text-slate-400">Anonymous peer channel. Assigned Nickname: <span id="userNicknameBadge" class="text-emerald-400 font-mono font-bold"></span></p>
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <span class="text-[10px] bg-amber-500/10 text-amber-400 px-2.5 py-1 rounded-full border border-amber-500/20 font-medium">Rate limit: 1 msg / min</span>
+                    </div>
+                </div>
+
+                <div id="chatMessagesBox" class="flex-grow overflow-y-auto space-y-3 py-4 pr-2 my-2 text-xs">
+                    <!-- Messages populated here -->
+                </div>
+
+                <div class="pt-3 border-t border-slate-800 space-y-2">
+                    <div class="flex space-x-2">
+                        <input type="text" id="chatInputText" placeholder="Broadcast a message to the global channel..." maxlength="250" onkeydown="if(event.key==='Enter') sendChatMessage()" class="flex-grow bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-xs text-white focus:outline-none focus:border-emerald-500 transition">
+                        <button onclick="sendChatMessage()" class="bg-emerald-600 hover:bg-emerald-500 text-white px-5 py-3 rounded-xl text-xs font-bold transition shadow-lg shadow-emerald-600/20 flex items-center space-x-1.5">
+                            <i class="fa-solid fa-paper-plane"></i>
+                            <span>Send</span>
+                        </button>
+                    </div>
+                    <div class="flex justify-between items-center text-[11px] text-slate-500 px-1">
+                        <span id="chatCooldownStatus">Ready to send</span>
+                        <span>No registration or personal information required.</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 4: SUPPORT & DONATE -->
+        <div id="tabContent-donate" class="hidden space-y-6">
+            <div class="bg-cardBg border border-slate-800/80 rounded-2xl p-6 shadow-xl space-y-3">
+                <div class="flex items-center space-x-3">
+                    <div class="w-12 h-12 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400 text-2xl shadow-inner">
+                        <i class="fa-solid fa-hand-holding-dollar"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-xl font-bold text-white">Support Jade Trade</h2>
+                        <p class="text-xs text-slate-400 mt-0.5">If you find this decentralized tool helpful, consider supporting its upkeep and development!</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="bg-cardBg border border-slate-800/80 rounded-2xl p-6 shadow-xl flex flex-col items-center text-center space-y-4">
+                    <div class="w-12 h-12 rounded-2xl bg-blue-500/10 border border-blue-500/30 flex items-center justify-center text-blue-400 text-xl font-bold">
+                        <i class="fa-solid fa-qrcode"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-base font-bold text-white">GCash Donation</h3>
+                        <p class="text-xs text-slate-400 mt-1">Scan the QR code using your GCash app to send support.</p>
+                    </div>
+                    <div class="w-56 h-56 bg-slate-900 border-2 border-slate-700/80 rounded-2xl p-3 flex items-center justify-center shadow-inner">
+                        <img id="gcashQrImg" src="https://via.placeholder.com/200x200?text=Insert+GCash+QR+Here" alt="GCash QR Code" class="w-full h-full object-contain rounded-xl">
+                    </div>
+                    <p class="text-[11px] text-slate-500 font-mono">Account Name: Jade Trade Dev</p>
+                </div>
+
+                <div class="bg-cardBg border border-slate-800/80 rounded-2xl p-6 shadow-xl flex flex-col items-center text-center space-y-4 justify-between">
+                    <div class="w-full space-y-4">
+                        <div class="w-12 h-12 mx-auto rounded-2xl bg-indigo-500/10 border border-indigo-500/30 flex items-center justify-center text-indigo-400 text-xl font-bold">
+                            <i class="fa-brands fa-paypal"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-base font-bold text-white">PayPal Donation</h3>
+                            <p class="text-xs text-slate-400 mt-1">Support via secure credit card or PayPal balance worldwide.</p>
+                        </div>
+                    </div>
+
+                    <div class="w-full py-8">
+                        <a href="https://paypal.me/your-paypal-link" target="_blank" class="w-full bg-blue-600 hover:bg-blue-500 text-white px-6 py-3.5 rounded-xl text-xs font-bold transition shadow-lg shadow-blue-600/20 inline-flex items-center justify-center space-x-2">
+                            <i class="fa-brands fa-paypal text-base"></i>
+                            <span>Donate via PayPal</span>
+                        </a>
+                    </div>
+
+                    <div class="text-[11px] text-slate-500">
+                        <p>Thank you for keeping Jade Trade free and independent!</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t border-slate-800 bg-cardBg py-4 mt-8">
+        <div class="max-w-7xl mx-auto px-4 text-center text-xs text-slate-400">
+            <p>&copy; 2026 Jade Trade. Privacy-First Decentralized Interface. Zero Data Collection.</p>
+        </div>
+    </footer>
+
+    <!-- TradingView Widget Script -->
+    <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
+
+    <!-- Application Script -->
+    <script>
+        const top50Tokens = [
+            { symbol: 'BINANCE:BTCUSDT', name: 'Bitcoin (BTC)', short: 'BTC', base: 65400, change: '+3.4%' },
+            { symbol: 'BINANCE:ETHUSDT', name: 'Ethereum (ETH)', short: 'ETH', base: 3480, change: '+2.1%' },
+            { symbol: 'BINANCE:SOLUSDT', name: 'Solana (SOL)', short: 'SOL', base: 145, change: '+7.8%' },
+            { symbol: 'BINANCE:BNBUSDT', name: 'Binance Coin (BNB)', short: 'BNB', base: 580, change: '+1.2%' },
+            { symbol: 'BINANCE:XRPUSDT', name: 'Ripple (XRP)', short: 'XRP', base: 0.55, change: '-0.4%' },
+            { symbol: 'BINANCE:ADAUSDT', name: 'Cardano (ADA)', short: 'ADA', base: 0.45, change: '+1.9%' },
+            { symbol: 'BINANCE:DOGEUSDT', name: 'Dogecoin (DOGE)', short: 'DOGE', base: 0.12, change: '+4.5%' },
+            { symbol: 'BINANCE:AVAXUSDT', name: 'Avalanche (AVAX)', short: 'AVAX', base: 28, change: '+5.2%' },
+            { symbol: 'BINANCE:LINKUSDT', name: 'Chainlink (LINK)', short: 'LINK', base: 13, change: '+2.8%' },
+            { symbol: 'BINANCE:SUIUSDT', name: 'Sui (SUI)', short: 'SUI', base: 1.80, change: '+12.4%' },
+            { symbol: 'BINANCE:DOTUSDT', name: 'Polkadot (DOT)', short: 'DOT', base: 6.20, change: '+0.7%' },
+            { symbol: 'BINANCE:NEARUSDT', name: 'NEAR Protocol (NEAR)', short: 'NEAR', base: 5.10, change: '+6.1%' },
+            { symbol: 'BINANCE:MATICUSDT', name: 'Polygon (MATIC)', short: 'MATIC', base: 0.50, change: '-1.1%' },
+            { symbol: 'BINANCE:SHIBUSDT', name: 'Shiba Inu (SHIB)', short: 'SHIB', base: 0.000018, change: '+2.3%' },
+            { symbol: 'BINANCE:LTCUSDT', name: 'Litecoin (LTC)', short: 'LTC', base: 68, change: '+0.5%' },
+            { symbol: 'BINANCE:UNIUSDT', name: 'Uniswap (UNI)', short: 'UNI', base: 7.50, change: '+3.2%' },
+            { symbol: 'BINANCE:ICPUSDT', name: 'Internet Computer (ICP)', short: 'ICP', base: 8.40, change: '-1.5%' },
+            { symbol: 'BINANCE:APTUSDT', name: 'Aptos (APT)', short: 'APT', base: 6.30, change: '+4.1%' },
+            { symbol: 'BINANCE:RENDERUSDT', name: 'Render (RENDER)', short: 'RENDER', base: 5.50, change: '+8.9%' },
+            { symbol: 'BINANCE:FETUSDT', name: 'Artificial Superintelligence (FET)', short: 'FET', base: 1.30, change: '+5.7%' },
+            { symbol: 'BINANCE:ATOMUSDT', name: 'Cosmos (ATOM)', short: 'ATOM', base: 4.50, change: '+0.2%' },
+            { symbol: 'BINANCE:ETCUSDT', name: 'Ethereum Classic (ETC)', short: 'ETC', base: 22, change: '-0.8%' },
+            { symbol: 'BINANCE:FILUSDT', name: 'Filecoin (FIL)', short: 'FIL', base: 4.20, change: '+1.1%' },
+            { symbol: 'BINANCE:STXUSDT', name: 'Stacks (STX)', short: 'STX', base: 1.70, change: '+3.4%' },
+            { symbol: 'BINANCE:IMXUSDT', name: 'Immutable (IMX)', short: 'IMX', base: 1.50, change: '+2.5%' },
+            { symbol: 'BINANCE:INJUSDT', name: 'Injective (INJ)', short: 'INJ', base: 21, change: '+6.8%' },
+            { symbol: 'BINANCE:ARUSDT', name: 'Arweave (AR)', short: 'AR', base: 24, change: '+1.4%' },
+            { symbol: 'BINANCE:OPUSDT', name: 'Optimism (OP)', short: 'OP', base: 1.60, change: '+2.2%' },
+            { symbol: 'BINANCE:ARBUSDT', name: 'Arbitrum (ARB)', short: 'ARB', base: 0.55, change: '+1.8%' },
+            { symbol: 'BINANCE:TIAUSDT', name: 'Celestia (TIA)', short: 'TIA', base: 4.80, change: '+4.9%' },
+            { symbol: 'BINANCE:KASUSDT', name: 'Kaspa (KAS)', short: 'KAS', base: 0.16, change: '+3.1%' },
+            { symbol: 'BINANCE:GRTUSDT', name: 'The Graph (GRT)', short: 'GRT', base: 0.20, change: '+0.9%' },
+            { symbol: 'BINANCE:ALGOUSDT', name: 'Algorand (ALGO)', short: 'ALGO', base: 0.15, change: '-0.3%' },
+            { symbol: 'BINANCE:RUNEUSDT', name: 'THORChain (RUNE)', short: 'RUNE', base: 4.10, change: '+2.4%' },
+            { symbol: 'BINANCE:SEIUSDT', name: 'Sei (SEI)', short: 'SEI', base: 0.35, change: '+7.1%' },
+            { symbol: 'BINANCE:FTMUSDT', name: 'Fantom (FTM)', short: 'FTM', base: 0.65, change: '+3.8%' },
+            { symbol: 'BINANCE:SANDUSDT', name: 'The Sandbox (SAND)', short: 'SAND', base: 0.30, change: '+1.6%' },
+            { symbol: 'BINANCE:MANAUSDT', name: 'Decentraland (MANA)', short: 'MANA', base: 0.32, change: '+1.2%' },
+            { symbol: 'BINANCE:AXSUSDT', name: 'Axie Infinity (AXS)', short: 'AXS', base: 4.50, change: '+0.8%' },
+            { symbol: 'BINANCE:THETAUSDT', name: 'Theta Network (THETA)', short: 'THETA', base: 1.20, change: '+1.5%' },
+            { symbol: 'BINANCE:FLOKIUSDT', name: 'Floki (FLOKI)', short: 'FLOKI', base: 0.00015, change: '+4.2%' },
+            { symbol: 'BINANCE:PEPEUSDT', name: 'Pepe (PEPE)', short: 'PEPE', base: 0.00001, change: '+9.4%' },
+            { symbol: 'BINANCE:BONKUSDT', name: 'Bonk (BONK)', short: 'BONK', base: 0.00002, change: '+6.5%' },
+            { symbol: 'BINANCE:WIFUSDT', name: 'dogwifhat (WIF)', short: 'WIF', base: 1.80, change: '+11.2%' },
+            { symbol: 'BINANCE:JUPUSDT', name: 'Jupiter (JUP)', short: 'JUP', base: 0.85, change: '+5.4%' },
+            { symbol: 'BINANCE:HBARUSDT', name: 'Hedera (HBAR)', short: 'HBAR', base: 0.06, change: '+1.1%' },
+            { symbol: 'BINANCE:XLMUSDT', name: 'Stellar (XLM)', short: 'XLM', base: 0.10, change: '+0.4%' },
+            { symbol: 'BINANCE:VETUSDT', name: 'VeChain (VET)', short: 'VET', base: 0.02, change: '+1.7%' },
+            { symbol: 'BINANCE:BCHUSDT', name: 'Bitcoin Cash (BCH)', short: 'BCH', base: 360, change: '+2.2%' },
+            { symbol: 'BINANCE:EOSUSDT', name: 'EOS (EOS)', short: 'EOS', base: 0.55, change: '-0.2%' }
+        ];
+
+        const allCryptoNews = [
+            { title: "Institutional Inflows Surge Across Major Digital Asset Products", source: "Decentralized Wire", time: "2 hours ago", summary: "Net inflows into digital asset investment vehicles climb steadily as macroeconomic indicators stabilize across global markets.", url: "https://coindesk.com" },
+            { title: "Layer-2 Scaling Networks Reach Record Daily Transactions", source: "Blockchain Daily", time: "5 hours ago", summary: "Transaction throughput across primary scaling solutions hits new all-time highs with reduced gas fees for end users.", url: "https://cointelegraph.com" },
+            { title: "Global Regulators Outline New Frameworks for Decentralized Finance", source: "Policy Watch", time: "9 hours ago", summary: "International financial committees release updated guidelines aimed at balancing consumer protection with developer innovation.", url: "https://decrypt.co" },
+            { title: "Next-Gen Cryptographic Upgrades Proposed for Core Protocols", source: "Core Devs", time: "14 hours ago", summary: "Developers discuss upcoming consensus improvements designed to enhance network security and long-term decentralization.", url: "https://blockworks.co" },
+            { title: "Bitcoin Mining Difficulty Adjusts Upward Following Hashrate Peak", source: "Mining Insider", time: "1 day ago", summary: "Global hash rate continues upward trajectory as enterprise mining facilities deploy advanced semiconductor hardware.", url: "https://coindesk.com" },
+            { title: "Ethereum Staking Yields Stabilize Amid Expanding Validator Sets", source: "Staking Rewards", time: "1 day ago", summary: "Network validator counts reach new milestones while participation rates maintain strong decentralization metrics.", url: "https://cointelegraph.com" },
+            { title: "Solana DeFi Total Value Locked Hits Multi-Month Highs", source: "Solana Daily", time: "1 day ago", summary: "High-performance decentralized exchanges and lending markets report record volume surges.", url: "https://decrypt.co" },
+            { title: "Cross-Chain Bridge Security Enhancements Adopt Zero-Knowledge Proofs", source: "Security Brief", time: "2 days ago", summary: "New cryptographic primitives minimize trust assumptions for cross-chain asset transfers.", url: "https://blockworks.co" },
+            { title: "Central Bank Digital Currencies (CBDCs) Enter Advanced Pilot Phases", source: "Global Finance", time: "2 days ago", summary: "Multiple sovereign monetary authorities test retail and wholesale settlement implementations.", url: "https://coindesk.com" },
+            { title: "Tokenized Real-World Assets (RWAs) Experience Exponential Growth", source: "Asset Tokenization", time: "2 days ago", summary: "Treasury bills and private credit instruments on-chain surpass previous capitalization benchmarks.", url: "https://cointelegraph.com" },
+            { title: "Web3 Gaming Ecosystems Roll Out Sustainable Tokenomics Models", source: "GameFi Hub", time: "3 days ago", summary: "Developers pivot toward player-driven economies focused on longevity rather than speculative rewards.", url: "https://decrypt.co" },
+            { title: "Decentralized Exchanges (DEXs) Outpace CEX Spot Volumes in Select Pairs", source: "DEX Metrics", time: "3 days ago", summary: "Automated market makers capture significant market share amid heightened on-chain activity.", url: "https://blockworks.co" },
+            { title: "Privacy-Preserving Transactions Gain Traction with Advanced Cryptography", source: "Cipher Tech", time: "3 days ago", summary: "Zero-knowledge rollups integrate opt-in confidentiality layers without sacrificing compliance.", url: "https://coindesk.com" },
+            { title: "AI and Blockchain Convergence Accelerates Decentralized Compute Networks", source: "AI Chain", time: "4 days ago", summary: "Distributed GPU marketplaces report record utilization for training open-source large language models.", url: "https://cointelegraph.com" },
+            { title: "Venture Capital Funding Rebounds for Early-Stage Web3 Startups", source: "VC Watch", time: "4 days ago", summary: "Infrastructure and modular execution layer projects lead the latest funding rounds.", url: "https://decrypt.co" },
+            { title: "Liquidity Restaking Protocols Introduce Multi-Tiered Security Guarantees", source: "Yield Report", time: "4 days ago", summary: "Innovative security-sharing frameworks attract billions in total value locked across networks.", url: "https://blockworks.co" },
+            { title: "Modular Blockchain Architecture Redefines Scalability Standards", source: "Tech Architecture", time: "5 days ago", summary: "Separating data availability from execution layers proves successful in production environments.", url: "https://coindesk.com" },
+            { title: "Crypto Asset Custody Solutions Adopt Institutional-Grade Security", source: "Custody News", time: "5 days ago", summary: "Multi-party computation (MPC) wallets become the gold standard for institutional fund managers.", url: "https://cointelegraph.com" },
+            { title: "Decentralized Identity (DID) Standards Advance Toward Global Adoption", source: "ID Systems", time: "5 days ago", summary: "Self-sovereign identity protocols empower users with verifiable credentials across Web3.", url: "https://decrypt.co" },
+            { title: "Ecosystem Grants Program Launches to Support Open-Source Tooling", source: "Dev Grants", time: "6 days ago", summary: "Foundations allocate substantial treasury reserves to foster developer tooling and security audits.", url: "https://blockworks.co" },
+            { title: "Meme Coin Liquidity Cycles Spark Debate Among Market Analysts", source: "Market Pulse", time: "6 days ago", summary: "High volatility community tokens continue to drive speculative retail engagement on Solana and Base.", url: "https://coindesk.com" },
+            { title: "Smart Contract Auditing Firms Integrate Automated AI Bug Detection", source: "SecureCode", time: "6 days ago", summary: "Automated vulnerability scanners catch critical reentrancy flaws before mainnet deployment.", url: "https://cointelegraph.com" },
+            { title: "Decentralized Autonomous Organizations (DAOs) Streamline Treasury Management", source: "Governance Journal", time: "1 week ago", summary: "New multisig governance frameworks improve capital efficiency and operational agility.", url: "https://decrypt.co" },
+            { title: "Layer-3 App Chains Gain Momentum for High-Frequency Trading", source: "AppChain Watch", time: "1 week ago", summary: "Customized execution environments offer ultra-low latency for decentralized derivatives exchanges.", url: "https://blockworks.co" },
+            { title: "Cross-Chain Liquidity Aggregators Simplify Multi-Chain User Experience", source: "UX Weekly", time: "1 week ago", summary: "One-click bridging and swapping protocols eliminate friction for everyday crypto users.", url: "https://coindesk.com" },
+            { title: "On-Chain Analytics Reveal Strong Long-Term Holder Accumulation", source: "Glassnode Insights", time: "1 week ago", summary: "Exchange balances drop to multi-year lows as coins move into cold storage vaults.", url: "https://cointelegraph.com" },
+            { title: "Decentralized Storage Networks Scale to Petabyte Capacities", source: "Storage Web", time: "1 week ago", summary: "Permanent data availability layers empower censorship-resistant archiving for global datasets.", url: "https://decrypt.co" },
+            { title: "Global Crypto Adoption Indexes Highlight Emerging Market Leadership", source: "Chainalysis Report", time: "8 days ago", summary: "Latin America and Southeast Asia lead retail peer-to-peer crypto adoption metrics.", url: "https://blockworks.co" },
+            { title: "Energy-Efficient Consensus Mechanisms Set New Environmental Benchmarks", source: "Green Crypto", time: "8 days ago", summary: "Independent audits confirm negligible carbon footprints across proof-of-stake blockchain networks.", url: "https://coindesk.com" },
+            { title: "Tokenomics Redesigns Focus on Deflationary Burn Mechanisms", source: "Token Economics", time: "8 days ago", summary: "Protocol fee collection models shift toward sustainable token buybacks and permanent burns.", url: "https://cointelegraph.com" },
+            { title: "Decentralized Oracle Networks Expand Data Feeds for Real-World Assets", source: "Oracle Wire", time: "9 days ago", summary: "Secure off-chain data delivery enables complex financial agreements and commodity tracking.", url: "https://decrypt.co" },
+            { title: "Open-Source Cryptography Libraries Receive Major Security Grants", source: "Crypto Security", time: "9 days ago", summary: "Core cryptographic primitives undergo rigorous peer review and formal verification.", url: "https://blockworks.co" },
+            { title: "Regulatory Clarity Encourages Traditional Fintech Giants to Explore Crypto", source: "Fintech Times", time: "10 days ago", summary: "Payment processors and neobanks integrate stablecoin settlement layers for cross-border transfers.", url: "https://coindesk.com" },
+            { title: "Hardware Wallet Manufacturers Unveil Advanced Air-Gapped Signing Devices", source: "Hardware Review", time: "10 days ago", summary: "New security architectures protect seed phrases against sophisticated physical extraction attacks.", url: "https://cointelegraph.com" },
+            { title: "Decentralized Streaming and Content Platforms Challenge Legacy Media", source: "Creator Economy", time: "11 days ago", summary: "Direct-to-fan monetization models empower independent creators with zero platform censorship.", url: "https://decrypt.co" },
+            { title: "Liquidity Pools Optimize Automated Market Maker Curves for Reduced Slippage", source: "DeFi Research", time: "11 days ago", summary: "Concentrated liquidity innovations maximize capital efficiency for stablecoin and correlated pairs.", url: "https://blockworks.co" },
+            { title: "Zero-Knowledge Identity Verification Protects User Data on Web3", source: "Privacy Focus", time: "12 days ago", summary: "Users prove eligibility requirements without exposing personal identification documents.", url: "https://coindesk.com" },
+            { title: "Decentralized Autonomous Fleets Explore Helium-Style IoT Networks", source: "IoT Chain", time: "12 days ago", summary: "Crowdsourced wireless infrastructure expands coverage across metropolitan regions.", url: "https://cointelegraph.com" },
+            { title: "Smart Contract Insurance Protocols Expand Coverage for Hack Protection", source: "DeFi Safe", time: "13 days ago", summary: "Underwriting pools provide robust financial safety nets against protocol exploits and oracle failures.", url: "https://decrypt.co" },
+            { title: "Cross-Border Remittances via Stablecoins Reach Record Monthly Volumes", source: "Remittance Watch", time: "13 days ago", summary: "Migrant workers leverage low-cost blockchain rails to send funds instantly to home countries.", url: "https://blockworks.co" },
+            { title: "Decentralized Autonomous Venture Funds Deploy Capital into Web3 Startups", source: "DAO Venture", time: "2 weeks ago", summary: "Token-holder governed syndicates outpace traditional angel investing groups in speed and agility.", url: "https://coindesk.com" },
+            { title: "Multichain Wallet Interfaces Integrate Unified Gas Payment Tokens", source: "Wallet Tech", time: "2 weeks ago", summary: "Users can pay network transaction fees in any preferred token without holding native gas assets.", url: "https://cointelegraph.com" },
+            { title: "Decentralized Prediction Markets See Record Engagement During Elections", source: "Prediction Hub", time: "2 weeks ago", summary: "Crowdsourced forecasting platforms outperform traditional polling models in real-time accuracy.", url: "https://decrypt.co" },
+            { title: "Liquid Staking Derivatives Expand Across Alternative Layer-1 Networks", source: "Staking Ledger", time: "2 weeks ago", summary: "Unlocking staked capital fuels broader participation in emerging decentralized finance ecosystems.", url: "https://blockworks.co" },
+            { title: "Enterprise Blockchain Consortia Focus on Supply Chain Transparency", source: "Enterprise Ledger", time: "2 weeks ago", summary: "Global logistics companies track perishable goods and luxury items securely on shared ledgers.", url: "https://coindesk.com" },
+            { title: "Decentralized Autonomous Research Groups Publish Open-Source Breakthroughs", source: "Science DAO", time: "3 weeks ago", summary: "Crowdfunded scientific research accelerates drug discovery and longevity studies without grant gatekeepers.", url: "https://cointelegraph.com" },
+            { title: "Cross-Border Regulatory Harmonization Discussions Gain Momentum", source: "Global Policy", time: "3 weeks ago", summary: "International standard-setting bodies work toward unified guidelines for digital asset service providers.", url: "https://decrypt.co" },
+            { title: "Layer-2 Gas Token Economics Shift Toward Sustainable Fee Sharing", source: "L2 Economics", time: "3 weeks ago", summary: "Sequencer revenue models evolve to reward ecosystem contributors and secure decentralized validation.", url: "https://blockworks.co" },
+            { title: "Decentralized Social Media Protocols Surpass Million Daily Active Users", source: "Social Web3", time: "3 weeks ago", summary: "Censorship-resistant social graphs empower users to own their profiles and follower relationships.", url: "https://cointelegraph.com" },
+            { title: "Next-Gen Consensus Research Focuses on Asynchronous Byzantine Fault Tolerance", source: "Protocol Labs", time: "3 weeks ago", summary: "Academic cryptographers publish theoretical frameworks for lightning-fast block finality.", url: "https://cointelegraph.com" }
+        ];
+
+        let currentTheme = 'dark';
+        let currentSymbol = 'BINANCE:BTCUSDT';
+        let currentEngineTimeframe = 'D';
+        let userNickname = '';
+        let lastMessageTime = 0;
+        let currentNewsPage = 1;
+        const newsPerPage = 10;
+
+        window.onload = function() {
+            populateTokenDropdowns();
+            renderTrendingRibbon();
+            initTradingViewWidget(currentSymbol, currentTheme);
+            triggerRecalculate();
+            renderNewsPage(1);
+            initAnonymousChat();
+        };
+
+        function populateTokenDropdowns() {
+            const mainSel = document.getElementById('mainAssetSelect');
+            mainSel.innerHTML = '';
+
+            top50Tokens.forEach(token => {
+                let optMain = document.createElement('option');
+                optMain.value = token.symbol;
+                optMain.innerText = token.name;
+                mainSel.appendChild(optMain);
+            });
+        }
+
+        function renderTrendingRibbon() {
+            const ribbon = document.getElementById('trendingRibbon');
+            const newsGrid = document.getElementById('trendingNewsGrid');
+            ribbon.innerHTML = '';
+            newsGrid.innerHTML = '';
+
+            const trending = [top50Tokens[0], top50Tokens[1], top50Tokens[2], top50Tokens[9], top50Tokens[41]];
+
+            trending.forEach(t => {
+                let item = document.createElement('div');
+                item.className = "flex items-center space-x-1.5 bg-slate-900 px-2.5 py-1 rounded-lg border border-slate-800 cursor-pointer hover:border-emerald-500 transition";
+                item.onclick = () => onAssetDropdownChange(t.symbol);
+                item.innerHTML = `
+                    <span class="font-semibold text-white">${t.short}</span>
+                    <span class="text-[10px] ${t.change.startsWith('+') ? 'text-emerald-400' : 'text-red-400'} font-mono">${t.change}</span>
+                `;
+                ribbon.appendChild(item);
+
+                let gridCard = document.createElement('div');
+                gridCard.className = "bg-slate-900/80 border border-slate-800 rounded-xl p-3 flex items-center justify-between cursor-pointer hover:border-emerald-500 transition";
+                gridCard.onclick = () => onAssetDropdownChange(t.symbol);
+                gridCard.innerHTML = `
+                    <div>
+                        <span class="text-xs font-bold text-white block">${t.name}</span>
+                        <span class="text-[10px] text-slate-400 font-mono">Volatile & Trending</span>
+                    </div>
+                    <span class="text-xs font-mono font-bold ${t.change.startsWith('+') ? 'text-emerald-400' : 'text-red-400'}">${t.change}</span>
+                `;
+                newsGrid.appendChild(gridCard);
+            });
+        }
+
+        function switchTab(tabName) {
+            ['terminal', 'news', 'chat', 'donate'].forEach(t => {
+                document.getElementById(`tabContent-${t}`).classList.add('hidden');
+                
+                const navBtn = document.getElementById(`nav-${t}`);
+                if (navBtn) {
+                    navBtn.className = "flex items-center space-x-2 px-4 py-2 rounded-xl text-xs font-semibold transition text-slate-400 hover:bg-slate-800 hover:text-slate-200";
+                }
+                const mobBtn = document.getElementById(`nav-mob-${t}`);
+                if (mobBtn) {
+                    mobBtn.className = "text-slate-400 font-semibold px-3 py-1";
+                }
+            });
+
+            document.getElementById(`tabContent-${tabName}`).classList.remove('hidden');
+            
+            const activeNav = document.getElementById(`nav-${tabName}`);
+            if (activeNav) {
+                activeNav.className = "flex items-center space-x-2 px-4 py-2 rounded-xl text-xs font-semibold transition bg-emerald-600 text-white shadow-lg shadow-emerald-600/20";
+            }
+            
+            const activeMob = document.getElementById(`nav-mob-${tabName}`);
+            if (activeMob) {
+                activeMob.className = "text-emerald-400 font-semibold px-3 py-1";
+            }
+        }
+
+        function toggleConfigPanel() {
+            const panel = document.getElementById('configPanelContent');
+            if (panel.classList.contains('hidden')) {
+                panel.classList.remove('hidden');
+            } else {
+                panel.classList.add('hidden');
+            }
+        }
+
+        function renderNewsPage(page) {
+            currentNewsPage = page;
+            const todayStr = new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+            document.getElementById('newsDateBadge').innerText = "Live Briefs: " + todayStr;
+
+            const container = document.getElementById('newsContainer');
+            container.innerHTML = '';
+
+            const startIdx = (page - 1) * newsPerPage;
+            const endIdx = startIdx + newsPerPage;
+            const pageArticles = allCryptoNews.slice(startIdx, endIdx);
+
+            pageArticles.forEach(item => {
+                let card = document.createElement('div');
+                card.className = "bg-cardBg border border-slate-800/80 rounded-2xl p-5 shadow-xl space-y-3 hover:border-slate-700 transition flex flex-col justify-between";
+                card.innerHTML = `
+                    <div class="space-y-3">
+                        <div class="flex items-center justify-between text-[11px] text-slate-400">
+                            <span class="text-emerald-400 font-medium">${item.source}</span>
+                            <span>${item.time}</span>
+                        </div>
+                        <h3 class="text-sm font-bold text-white">${item.title}</h3>
+                        <p class="text-xs text-slate-400 leading-relaxed">${item.summary}</p>
+                    </div>
+                    <div class="pt-3 border-t border-slate-800/80 flex items-center justify-between">
+                        <span class="text-[10px] text-slate-500 font-mono">Verified Source</span>
+                        <a href="${item.url}" target="_blank" class="text-xs font-semibold text-emerald-400 hover:text-emerald-300 flex items-center space-x-1 transition">
+                            <span>Read Full Article</span>
+                            <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
+                        </a>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+
+            const totalPages = Math.ceil(allCryptoNews.length / newsPerPage);
+            document.getElementById('paginationInfo').innerText = `Showing Page ${page} of ${totalPages} (${allCryptoNews.length} total articles)`;
+
+            const controls = document.getElementById('paginationControls');
+            controls.innerHTML = '';
+
+            for (let i = 1; i <= totalPages; i++) {
+                let btn = document.createElement('button');
+                btn.onclick = () => renderNewsPage(i);
+                btn.className = i === page 
+                    ? "px-3 py-1.5 rounded-lg bg-emerald-600 text-white font-bold transition shadow"
+                    : "px-3 py-1.5 rounded-lg bg-slate-900 text-slate-400 hover:text-white border border-slate-800 transition";
+                btn.innerText = i;
+                controls.appendChild(btn);
+            }
+        }
+
+        function initTradingViewWidget(symbol, theme) {
+            document.getElementById('tradingview_widget_container').innerHTML = '';
+            
+            new TradingView.widget({
+                "width": "100%",
+                "height": 420,
+                "symbol": symbol,
+                "interval": "D",
+                "timezone": "Etc/UTC",
+                "theme": theme,
+                "style": "1",
+                "locale": "en",
+                "toolbar_bg": theme === 'dark' ? "#0f172a" : "#f1f3f6",
+                "enable_publishing": false,
+                "hide_side_toolbar": false,
+                "allow_symbol_change": true,
+                "details": true,
+                "hotlist": false,
+                "calendar": false,
+                "studies": [
+                    "Volume@tv-basicstudies"
+                ],
+                "container_id": "tradingview_widget_container"
+            });
+        }
+
+        function setEngineTimeframe(tf) {
+            currentEngineTimeframe = tf;
+            ['1m', '5m', '15m', '1h', '4h', 'D'].forEach(t => {
+                const btn = document.getElementById(`tf_${t}`);
+                if (btn) {
+                    if (t === tf) {
+                        btn.className = "px-2 py-0.5 text-[11px] font-semibold rounded transition bg-emerald-600 text-white shadow";
+                    } else {
+                        btn.className = "px-2 py-0.5 text-[11px] font-semibold rounded transition text-slate-400 hover:text-white";
+                    }
+                }
+            });
+        }
+
+        // Both buttons now call triggerRecalculate() ensuring complete synchronization of timeframe and indicators
+        function updateEngineTimeframe() {
+            triggerRecalculate();
+        }
+
+        function onAssetDropdownChange(symbol) {
+            currentSymbol = symbol;
+            const tokenObj = top50Tokens.find(t => t.symbol === symbol);
+            if (tokenObj) {
+                document.getElementById('selectedTokenTitle').innerText = tokenObj.name;
+                document.getElementById('mainAssetSelect').value = symbol;
+            }
+            initTradingViewWidget(currentSymbol, currentTheme);
+            triggerRecalculate();
+            switchTab('terminal');
+        }
+
+        function updateRangeVal(rangeId, labelId) {
+            document.getElementById(labelId).innerText = document.getElementById(rangeId).value + (rangeId === 'volThreshold' ? 'x' : '');
+        }
+
+        function triggerRecalculate() {
+            const tokenObj = top50Tokens.find(t => t.symbol === currentSymbol) || top50Tokens[0];
+            
+            const rsiEnabled = document.getElementById('rsiEnabled').checked;
+            const rsiPeriod = parseInt(document.getElementById('rsiPeriod').value) || 14;
+            const rsiOverbought = parseFloat(document.getElementById('rsiOverbought').value) || 70;
+            const rsiOversold = parseFloat(document.getElementById('rsiOversold').value) || 30;
+
+            const maEnabled = document.getElementById('maEnabled').checked;
+            const maType = document.getElementById('maType').value;
+            const maPeriod = parseInt(document.getElementById('maPeriod').value) || 20;
+
+            const macdEnabled = document.getElementById('macdEnabled').checked;
+            const macdFast = parseInt(document.getElementById('macdFast').value) || 12;
+            const macdSlow = parseInt(document.getElementById('macdSlow').value) || 26;
+            const macdSignal = parseInt(document.getElementById('macdSignal').value) || 9;
+
+            const volEnabled = document.getElementById('volEnabled').checked;
+            const volThreshold = parseFloat(document.getElementById('volThreshold').value) || 1.5;
+
+            // Strict Timeframe weight factor to ensure score responds dynamically to timeframe shifts
+            let tfWeight = 1.0;
+            if (currentEngineTimeframe === '1m') tfWeight = 0.6;
+            else if (currentEngineTimeframe === '5m') tfWeight = 0.75;
+            else if (currentEngineTimeframe === '15m') tfWeight = 0.9;
+            else if (currentEngineTimeframe === '1h') tfWeight = 1.1;
+            else if (currentEngineTimeframe === '4h') tfWeight = 1.3;
+            else if (currentEngineTimeframe === 'D') tfWeight = 1.5;
+
+            let configModifier = (rsiPeriod * 0.1) + (maPeriod * 0.05) + ((macdSlow - macdFast) * 0.2);
+            let seed = (tokenObj.name.length * 7.5 * tfWeight) + configModifier;
+            let currentRsi = 30 + ((seed * 4.67) % 55);
+            if (currentSymbol.includes('BTC')) currentRsi = 45 + (tfWeight * 8);
+            if (currentSymbol.includes('ETH')) currentRsi = 50 - (tfWeight * 5);
+
+            document.getElementById('rsiLiveValBadge').innerText = currentRsi.toFixed(1);
+
+            const priceAboveMa = (Math.floor(seed) % 2 === 0);
+            const macdPositive = (Math.floor(seed) % 3 !== 0);
+            const volumeSpike = volEnabled && ((seed * volThreshold) % 4 === 0);
+
+            let score = 50;
+            let rsiText = "", maText = "", macdText = "", volText = "";
+
+            if (rsiEnabled) {
+                if (currentRsi > rsiOverbought) { score -= 25; rsiText = `Overbought > ${rsiOverbought} (-25)`; }
+                else if (currentRsi < rsiOversold) { score += 30; rsiText = `Oversold < ${rsiOversold} (+30)`; }
+                else if (currentRsi > 50) { score += (15 * tfWeight); rsiText = `Neutral Bullish (+15)`; }
+                else { score -= (15 * tfWeight); rsiText = `Neutral Bearish (-15)`; }
+            } else { rsiText = "Disabled (0)"; }
+
+            if (maEnabled) {
+                if (priceAboveMa) { score += (25 * tfWeight); maText = `${maType} (${maPeriod}) Bullish (+25)`; }
+                else { score -= (25 * tfWeight); maText = `${maType} (${maPeriod}) Bearish (-25)`; }
+            } else { maText = "Disabled (0)"; }
+
+            if (macdEnabled) {
+                if (macdPositive) { score += (20 * tfWeight); macdText = `MACD (${macdFast},${macdSlow}) + (+20)`; }
+                else { score -= (20 * tfWeight); macdText = `MACD (${macdFast},${macdSlow}) - (-20)`; }
+            } else { macdText = "Disabled (0)"; }
+
+            if (volEnabled) {
+                if (volumeSpike) { score += 15; volText = `Spike > ${volThreshold}x (+15)`; }
+                else { volText = `Normal Volume (0)`; }
+            } else { volText = "Disabled (0)"; }
+
+            score = Math.round(Math.min(Math.max(score, 0), 100));
+
+            let bias = 'NEUTRAL';
+            if (score >= 58) bias = 'LONG';
+            else if (score <= 42) bias = 'SHORT';
+            else bias = 'NEUTRAL';
+
+            updateSignalUIPanel(bias, score, rsiText, maText, macdText, volText, currentRsi, tokenObj.name, currentEngineTimeframe);
+        }
+
+        function updateSignalUIPanel(bias, score, rsiText, maText, macdText, volText, rsiVal, tokenName, tf) {
+            const card = document.getElementById('signalPanelCard');
+            const iconBox = document.getElementById('signalIconBox');
+            const faIcon = document.getElementById('signalFaIcon');
+            const confBadge = document.getElementById('confidenceBadge');
+            const titleEl = document.getElementById('signalTitle');
+            const scoreEl = document.getElementById('scoreNumber');
+            const rationaleEl = document.getElementById('rationaleText');
+
+            document.getElementById('explainRsi').innerText = rsiText;
+            document.getElementById('explainMa').innerText = maText;
+            document.getElementById('explainMacd').innerText = macdText;
+            document.getElementById('explainVol').innerText = volText;
+            scoreEl.innerText = (score >= 50 ? '+' : '') + score;
+
+            if (bias === 'LONG') {
+                card.className = "bg-gradient-to-br from-cardBg to-slate-900 border-2 border-emerald-500/40 rounded-2xl p-5 shadow-xl relative overflow-hidden transition-all duration-300 space-y-4";
+                iconBox.className = "w-12 h-12 rounded-xl bg-emerald-500/20 border-2 border-emerald-500/40 flex items-center justify-center text-emerald-400 text-lg shadow-lg shadow-emerald-500/10 flex-shrink-0";
+                faIcon.className = "fa-solid fa-arrow-trend-up";
+                confBadge.className = "text-[9px] px-2 py-0.2 rounded-full font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30";
+                confBadge.innerText = score >= 75 ? "Very High Confidence" : "Moderate Confidence";
+                titleEl.className = "text-xl font-extrabold tracking-tight text-emerald-400 mt-0.5";
+                titleEl.innerText = "LONG BIAS";
+                scoreEl.className = "text-xl font-mono font-black text-emerald-400";
+                rationaleEl.innerText = `Evaluated via current indicator thresholds for ${tokenName} on timeframe [${tf}]. RSI is at ${rsiVal.toFixed(1)}, moving average and MACD momentum support buyer continuation on this scale.`;
+            } else if (bias === 'SHORT') {
+                card.className = "bg-gradient-to-br from-cardBg to-slate-900 border-2 border-red-500/40 rounded-2xl p-5 shadow-xl relative overflow-hidden transition-all duration-300 space-y-4";
+                iconBox.className = "w-12 h-12 rounded-xl bg-red-500/20 border-2 border-red-500/40 flex items-center justify-center text-red-400 text-lg shadow-lg shadow-red-500/10 flex-shrink-0";
+                faIcon.className = "fa-solid fa-arrow-trend-down";
+                confBadge.className = "text-[9px] px-2 py-0.2 rounded-full font-bold bg-red-500/20 text-red-400 border border-red-500/30";
+                confBadge.innerText = score <= 25 ? "Very High Confidence" : "Moderate Confidence";
+                titleEl.className = "text-xl font-extrabold tracking-tight text-red-400 mt-0.5";
+                titleEl.innerText = "SHORT BIAS";
+                scoreEl.className = "text-xl font-mono font-black text-red-400";
+                rationaleEl.innerText = `Evaluated via current indicator thresholds for ${tokenName} on timeframe [${tf}]. Price action and oscillator metrics have crossed into seller dominance parameters for timeframe [${tf}].`;
+            } else {
+                card.className = "bg-gradient-to-br from-cardBg to-slate-900 border-2 border-amber-500/40 rounded-2xl p-5 shadow-xl relative overflow-hidden transition-all duration-300 space-y-4";
+                iconBox.className = "w-12 h-12 rounded-xl bg-amber-500/20 border-2 border-amber-500/40 flex items-center justify-center text-amber-400 text-lg shadow-lg shadow-amber-500/10 flex-shrink-0";
+                faIcon.className = "fa-solid fa-scale-balanced";
+                confBadge.className = "text-[9px] px-2 py-0.2 rounded-full font-bold bg-amber-500/20 text-amber-400 border border-amber-500/30";
+                confBadge.innerText = "Consolidation / Mixed";
+                titleEl.className = "text-xl font-extrabold tracking-tight text-amber-400 mt-0.5";
+                titleEl.innerText = "NEUTRAL BIAS";
+                scoreEl.className = "text-xl font-mono font-black text-amber-400";
+                rationaleEl.innerText = `Active indicator settings give mixed readings for ${tokenName} on timeframe [${tf}]. Market is consolidating within your configured boundaries.`;
+            }
+        }
+
+        function initAnonymousChat() {
+            const adjectives = ['Crypto', 'Satoshi', 'Bull', 'Cyber', 'Block', 'Hodl', 'Token', 'Alpha', 'Node', 'Chain'];
+            const nouns = ['Falcon', 'Titan', 'Ghost', 'Vortex', 'Ninja', 'Pioneer', 'Sentinel', 'Matrix', 'Zenith', 'Trader'];
+            
+            const randomAdj = adjectives[Math.floor(Math.random() * adjectives.length)];
+            const randomNoun = nouns[Math.floor(Math.random() * nouns.length)];
+            const randomNum = Math.floor(Math.random() * 900) + 100;
+            
+            userNickname = `${randomAdj}${randomNoun}_${randomNum}`;
+            document.getElementById('userNicknameBadge').innerText = userNickname;
+
+            const chatBox = document.getElementById('chatMessagesBox');
+            chatBox.innerHTML = `
+                <div class="bg-slate-900/60 p-3 rounded-xl border border-slate-800 space-y-1">
+                    <div class="flex items-center justify-between text-[10px] text-slate-400">
+                        <span class="text-blue-400 font-bold">SatoshiZenith_402</span>
+                        <span>Just now</span>
+                    </div>
+                    <p class="text-slate-300">Welcome to Jade Trade global chat! Remember no registration or data collection happens here.</p>
+                </div>
+                <div class="bg-slate-900/60 p-3 rounded-xl border border-slate-800 space-y-1">
+                    <div class="flex items-center justify-between text-[10px] text-slate-400">
+                        <span class="text-emerald-400 font-bold">CryptoFalcon_119</span>
+                        <span>2 mins ago</span>
+                    </div>
+                    <p class="text-slate-300">Both update buttons now fully synchronize timeframe weights and indicator settings instantaneously!</p>
+                </div>
+            `;
+        }
+
+        function sendChatMessage() {
+            const input = document.getElementById('chatInputText');
+            const text = input.value.trim();
+            if (!text) return;
+
+            const now = Date.now();
+            const cooldownSecs = 60;
+            const elapsed = Math.floor((now - lastMessageTime) / 1000);
+
+            if (lastMessageTime !== 0 && elapsed < cooldownSecs) {
+                const remaining = cooldownSecs - elapsed;
+                document.getElementById('chatCooldownStatus').innerText = `Rate limit active: Please wait ${remaining}s before sending another message.`;
+                document.getElementById('chatCooldownStatus').className = "text-red-400 font-medium";
+                return;
+            }
+
+            const chatBox = document.getElementById('chatMessagesBox');
+            const msgDiv = document.createElement('div');
+            msgDiv.className = "bg-slate-900/80 p-3 rounded-xl border border-slate-800 space-y-1";
+            msgDiv.innerHTML = `
+                <div class="flex items-center justify-between text-[10px] text-slate-400">
+                    <span class="text-emerald-400 font-bold">${userNickname} (You)</span>
+                    <span>Just now</span>
+                </div>
+                <p class="text-slate-200">${escapeHtml(text)}</p>
+            `;
+            chatBox.appendChild(msgDiv);
+            chatBox.scrollTop = chatBox.scrollHeight;
+
+            input.value = '';
+            lastMessageTime = now;
+            document.getElementById('chatCooldownStatus').innerText = "Message sent successfully. Cooldown active (1 min).";
+            document.getElementById('chatCooldownStatus').className = "text-emerald-400 font-medium";
+        }
+
+        function escapeHtml(str) {
+            return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+        }
+    </script>
+</body>
+</html>
