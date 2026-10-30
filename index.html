@@ -39,6 +39,150 @@
             50% { opacity: 0.7; transform: scale(1.02); }
         }
         .animate-glow { animation: pulseGlow 3s infinite ease-in-out; }
+
+
+        /* Responsive presentation overrides: layout only; application logic is unchanged. */
+        *, *::before, *::after { box-sizing: border-box; }
+        html, body { width: 100%; max-width: 100%; overflow-x: hidden; }
+        img, iframe, canvas, svg { max-width: 100%; }
+        button, input, select, textarea { max-width: 100%; }
+        #trendingRibbon { min-width: 0; overflow-x: auto; scrollbar-width: thin; }
+        #tradingview_widget_container { width: 100%; min-width: 0; height: clamp(300px, 42vw, 520px); }
+        #tradingview_widget_container iframe { max-width: 100%; }
+        #chatMessagesBox { min-width: 0; overflow-wrap: anywhere; }
+        #chatInputText { min-width: 0; }
+        #paginationControls { flex-wrap: wrap; justify-content: flex-end; }
+        #configToggleIcon { text-align: right; }
+
+        @media (max-width: 767px) {
+            header > div:first-child {
+                height: auto;
+                min-height: 64px;
+                padding-top: 10px;
+                padding-bottom: 10px;
+                gap: 10px;
+                flex-wrap: wrap;
+            }
+            header > div:first-child > div:first-child { min-width: 0; }
+            header > div:first-child > div:first-child p {
+                max-width: 190px;
+                line-height: 1.35;
+            }
+            header > div:nth-child(3) {
+                display: flex;
+                width: 100%;
+                gap: 2px;
+                justify-content: space-between;
+                overflow-x: auto;
+                white-space: nowrap;
+                scrollbar-width: none;
+            }
+            header > div:nth-child(3)::-webkit-scrollbar { display: none; }
+            header > div:nth-child(3) button {
+                flex: 1 0 auto;
+                padding: 7px 8px;
+                font-size: 11px;
+            }
+            main {
+                padding-left: 12px !important;
+                padding-right: 12px !important;
+                padding-top: 16px !important;
+            }
+            main > div, main section { min-width: 0; }
+            #tabContent-terminal > div:first-child {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+            #tabContent-terminal > div:first-child > div:last-child {
+                width: 100%;
+            }
+            #tabContent-terminal > div:first-child > div:last-child > div {
+                width: 100%;
+                flex-wrap: wrap;
+            }
+            #mainAssetSelect { flex: 1; min-width: 0; }
+            #configPanelContent { grid-template-columns: minmax(0, 1fr) !important; }
+            #configPanelContent > div { min-width: 0; }
+            #configPanelContent input, #configPanelContent select { min-width: 0; }
+            #configToggleIcon {
+                max-width: 42%;
+                font-size: 9px;
+                line-height: 1.4;
+            }
+            #tradingview_widget_container { height: 360px; }
+            #tabContent-terminal .lg\:col-span-7,
+            #tabContent-terminal .lg\:col-span-5 { min-width: 0; }
+            #tabContent-terminal .rounded-2xl.p-5 { padding: 14px; }
+            #tabContent-news > div:first-child {
+                align-items: flex-start;
+                flex-direction: column;
+                gap: 12px;
+            }
+            #tabContent-news > div:first-child h2 {
+                align-items: flex-start;
+                font-size: 16px;
+                line-height: 1.4;
+            }
+            #paginationInfo {
+                width: 100%;
+                line-height: 1.5;
+            }
+            #tabContent-news > div:last-child {
+                align-items: flex-start;
+                flex-direction: column;
+                gap: 12px;
+            }
+            #paginationControls { justify-content: flex-start; }
+            #tabContent-chat > div:first-child {
+                height: min(680px, calc(100dvh - 170px));
+                min-height: 430px;
+                padding: 14px;
+            }
+            #tabContent-chat > div:first-child > div:first-child {
+                align-items: flex-start;
+                gap: 10px;
+                flex-wrap: wrap;
+            }
+            #tabContent-chat > div:first-child > div:first-child > div:nth-child(2) {
+                flex: 1;
+                min-width: 0;
+            }
+            #tabContent-chat > div:first-child > div:first-child > div:last-child {
+                width: 100%;
+                text-align: left;
+            }
+            #tabContent-chat > div:first-child > div:last-child > div:first-child {
+                align-items: stretch;
+            }
+            #chatInputText { padding-left: 10px; padding-right: 10px; }
+            #tabContent-chat button[onclick="sendChatMessage()"] { padding-left: 13px; padding-right: 13px; }
+            #tabContent-chat > div:first-child > div:last-child > div:last-child {
+                align-items: flex-start;
+                flex-direction: column;
+                gap: 5px;
+            }
+            #tabContent-donate .w-56.h-56 {
+                width: min(224px, 70vw);
+                height: min(224px, 70vw);
+            }
+            footer { padding-left: 12px; padding-right: 12px; }
+        }
+
+        @media (max-width: 380px) {
+            header > div:nth-child(3) button { padding-left: 5px; padding-right: 5px; font-size: 10px; }
+            #tradingview_widget_container { height: 320px; }
+            #tabContent-chat button[onclick="sendChatMessage()"] span { display: none; }
+            #configToggleIcon { max-width: 38%; }
+        }
+
+        @media (min-width: 768px) and (max-width: 1023px) {
+            #tradingview_widget_container { height: 390px; }
+            main { padding-left: 20px; padding-right: 20px; }
+        }
+
+        @media (min-width: 1024px) {
+            #tradingview_widget_container { height: clamp(420px, 38vw, 560px); }
+        }
     </style>
 </head>
 <body class="bg-darkBg text-slate-100 min-h-screen flex flex-col selection:bg-emerald-500 selection:text-white">
@@ -428,7 +572,7 @@
                         <p class="text-xs text-slate-400 mt-1">Scan the QR code using your GCash app to send support.</p>
                     </div>
                     <div class="w-56 h-56 bg-slate-900 border-2 border-slate-700/80 rounded-2xl p-3 flex items-center justify-center shadow-inner">
-                        <img id="gcashQrImg" src="gcash.jpeg" alt="GCash QR Code" class="w-full h-full object-contain rounded-xl">
+                     <img id="gcashQrImg" src="gcash.jpg" alt="GCash QR Code" class="w-full h-full object-contain rounded-xl">
                     </div>
                     <p class="text-[11px] text-slate-500 font-mono">Account Name: Jade Trade Dev</p>
                 </div>
