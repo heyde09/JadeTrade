@@ -235,22 +235,6 @@
             <button onclick="switchTab('chat')" id="nav-mob-chat" class="text-slate-400 font-semibold px-3 py-1"><i class="fa-solid fa-comments mr-1"></i>Chat</button>
             <button onclick="switchTab('donate')" id="nav-mob-donate" class="text-slate-400 font-semibold px-3 py-1"><i class="fa-solid fa-hand-holding-dollar mr-1"></i>Donate</button>
         </div>
-
-        <!-- Visible site-visit counter, kept near the top on desktop and mobile. -->
-        <div class="border-t border-slate-800 bg-slate-950/80 px-3 py-2">
-            <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-center gap-2 text-xs">
-                <span class="font-semibold tracking-wide text-slate-300"><i class="fa-solid fa-eye text-emerald-400 mr-1.5"></i>JADE TRADE PAGE VIEWS</span>
-                <img
-                    src="https://counterapi.com/counter.svg?label=Page%20Views&style=flat&color=10b981&labelColor=0f172a"
-                    alt="Jade Trade page view count"
-                    title="Page views recorded by CounterAPI"
-                    loading="eager"
-                    class="inline-block min-h-[24px] min-w-[90px] rounded-md"
-                    onerror="this.hidden=true; document.getElementById('visitorCounterFallback').hidden=false;"
-                >
-                <span id="visitorCounterFallback" hidden class="text-amber-300">Count temporarily unavailable</span>
-            </div>
-        </div>
     </header>
 
     <!-- Main Container Content -->
@@ -592,7 +576,7 @@
                         <p class="text-xs text-slate-400 mt-1">Scan the QR code using your GCash app to send support.</p>
                     </div>
                     <div class="w-56 h-56 bg-slate-900 border-2 border-slate-700/80 rounded-2xl p-3 flex items-center justify-center shadow-inner">
-                        <img id="gcashQrImg" src="https://raw.githubusercontent.com/heyde09/JadeTrade/main/gcash.jpeg" loading="lazy" alt="GCash QR Code" class="w-full h-full object-contain rounded-xl">
+                        <img id="gcashQrImg" src="https://via.placeholder.com/200x200?text=Insert+GCash+QR+Here" alt="GCash QR Code" class="w-full h-full object-contain rounded-xl">
                     </div>
                     <p class="text-[11px] text-slate-500 font-mono">Account Name: Jade Trade Dev</p>
                 </div>
@@ -628,8 +612,15 @@
     <footer class="border-t border-slate-800 bg-cardBg py-4 mt-8">
         <div class="max-w-7xl mx-auto px-4 text-center text-xs text-slate-400 space-y-2">
             <p>&copy; 2026 Jade Trade. Public market-data and visitor-counter services are provided by third parties. Indicator readings are educational and do not predict profit.</p>
+            <div class="flex flex-wrap items-center justify-center gap-2">
+                <span class="text-slate-500">Site visits:</span>
+                <div class="counterapi" aria-label="Jade Trade visitor counter" style="min-height:24px; min-width:100px;"></div>
+            </div>
         </div>
     </footer>
+
+    <!-- Static-site visitor counter. The counter provider processes page views. -->
+    <script src="https://counterapi.com/c.js" async></script>
 
     <!-- TradingView Widget Script -->
     <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
